@@ -8,8 +8,8 @@ class DB {
     // 是否自动释放查询结果
     protected $autoFree         = false;
     // 是否显示调试信息 如果启用会在日志文件记录sql语句
-    public $debug             = false;
-	public $debugData             = false;
+    public $debug             = true;
+	public $debugData             = true;
     // 是否使用永久连接
     protected $pconnect         = false;
     // 当前SQL指令
@@ -179,6 +179,7 @@ class DB {
             if($this->debugData) echo __LINE__.': connect() : $host : '.$host."<p>";
             $this->linkID = new mysqli($config['hostname'], $config['username'], $config['password'], $config['database'], $config['hostport'] ? intval($config['hostport']) : 3306);
 			// $this->linkID = mysql_connect( $host, $config['username'], $config['password']);
+           
 			if($this->debugData){
 				echo __LINE__." : ";
 				if(!$this->linkID){
@@ -186,9 +187,16 @@ class DB {
 				}else{
 					echo "inited<p>";
 				}
-			}
+			} 
+
+            //检查连接是否成功
+            if (mysqli_connect_errno()){
+                //注意mysqli_connect_error()新特性
+                die('Unable to connect!'). mysqli_connect_error();
+            }
+
 			if(!$this->linkID){
-					echo "数据库连接失败，请检查数据库配置(hostname,username,password)！<p>";
+				echo "数据库连接失败，请检查数据库配置(hostname,username,password)！<p>";
 			}
 
             if ( !$this->linkID || (!empty($config['database']) && !$this->linkID->select_db($config['database'])) ) {
@@ -276,18 +284,18 @@ class DB {
      +----------------------------------------------------------
      */
     protected function execute($str='') {
-        echo "1A"  . $this->lastInsID . '<br/>';
+        // echo "1A"  . $this->lastInsID . '<br/>';
         $this->connect();
         if ( !$this->linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
-        echo "2A"  . $this->lastInsID . '<br/>';
+        // echo "2A"  . $this->lastInsID . '<br/>';
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         //$this->W(1);
-        echo "3A"  . $this->lastInsID . '<br/>';
+        // echo "3A"  . $this->lastInsID . '<br/>';
         $result =   $this->linkID->query($this->queryStr) ;
         $this->debug();
-        echo "4A"  . $this->lastInsID . '<br/>';
+        // echo "4A"  . $this->lastInsID . '<br/>';
         if ( false === $result) {
             if ( $this->debug )
                 throw_exception($this->error());

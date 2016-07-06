@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>请求api</title>
+	<style type="text/css" media="screen">
+		textarea{
+			display: block;
+			width: 100%;
+		}
+	</style>
+	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+</head>
+<body>
+	<h3 id="des">1</h1>
+
+	<textarea id="sql" name=""></textarea>
+	<button type="">提交</button>
+	<textarea id="ret" name=""></textarea>
+	<script type="text/javascript">
+	function getSelect()
+    {
+        if(window.getSelection)
+        {
+            return (window.getSelection());
+        }
+        else
+        {
+            return (document.selection.createRange().text);
+        }
+        
+    }
+
+    $("#sql").mouseup(function(e){
+    	var txt;
+	    var parentOffset = $(this).offset();
+	    var x = e.pageX - parentOffset.left;
+	    var y = e.pageY - parentOffset.top;
+	    txt = getSelect();
+	    if (txt.toString().length > 1) {
+	    	console.log(txt.toString());
+	     $("#des").html(txt.toString());
+	    }
+    });
+
+	$("button").on('click', function(){
+
+		$.ajax({
+		    type: 'GET',
+		    url: 'index.php' ,
+		    data: {
+		    	sql:$("#des").html()
+		    } ,
+		    success: function(res){
+		    	console.log(res);
+		    	$("#ret").val(res);
+		    } ,
+		    // dataType: 'json'
+		});
+
+	});
+		
+		
+
+
+	</script>
+</body>
+</html>

@@ -37,7 +37,7 @@ abstract class API
 		$this->mysql->close();
 	}
 
-	abstract public function execSQL();
+	abstract public function execSQL($param = '');
 }
 
 ?>

@@ -7,7 +7,7 @@
 	'DB_HOST' => 'localhost',
 	'DB_NAME' => 'test',
 	'DB_USER' => 'root',
-	'DB_PWD' => '111111',
+	'DB_PWD' => '123456',
 	'DB_PORT' => '3306',
 	'DB_DSN' => '',
 	'DB_CHARSET' => 'utf8',

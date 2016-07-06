@@ -120,4 +120,59 @@ class Http {
         return $rs;
     }
 
+
+
+
+
+
+    /**
+     * 增加静态函数
+     */
+
+    public static function AjaxPost($url, $parms){
+        $url = $url . $parms; 
+        if (($ch = curl_init($url)) == false) { 
+            throw new Exception(sprintf("curl_init error for url %s.", $url)); 
+        } 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+        curl_setopt($ch, CURLOPT_HEADER, 0); 
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 600); 
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); 
+        if (is_array($parms)) { 
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data;')); 
+        } 
+        $postResult = @curl_exec($ch); 
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+        if ($postResult === false || $http_code != 200 || curl_errno($ch)) { 
+            $error = curl_error($ch); 
+            curl_close($ch); 
+            throw new Exception("HTTP POST FAILED:$error"); 
+        } else { 
+            // $postResult=str_replace()("\xEF\xBB\xBF", '', $postResult); 
+            switch (curl_getinfo($ch, CURLINFO_CONTENT_TYPE)) { 
+                case 'application/json': 
+                    $postResult = json_decode($postResult); 
+                    break; 
+            } 
+            curl_close($ch); 
+            return $postResult; 
+        } 
+    }
+
+    public static function AjaxGet($url){
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 500);
+        // 为保证第三方服务器与微信服务器之间数据传输的安全性，所有微信接口采用https方式调用，必须使用下面2行代码打开ssl安全校验。
+        // 如果在部署过程中代码在此处验证失败，请到 http://curl.haxx.se/ca/cacert.pem 下载新的证书判别文件。
+        // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, true);
+        curl_setopt($curl, CURLOPT_URL, $url);
+
+        $res = curl_exec($curl);
+        curl_close($curl);
+
+        return $res;
+    }
+
 }

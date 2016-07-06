@@ -12,7 +12,7 @@ class Response {
 	/**
 	 * @var int $ret 返回状态码，其中：200成功，400非法请求，500服务器错误
 	 */
-    protected $ret = 200;
+    protected $code = 200;
     
     /**
      * @var array 待返回给客户端的数据
@@ -36,8 +36,8 @@ class Response {
      * @param int $ret 返回状态码，其中：200成功，400非法请求，500服务器错误
      * @return Response
      */
-    public function setRet($ret) {
-    	$this->ret = $ret;
+    public function setCode($code) {
+    	$this->code = $code;
     	return $this;
     }
     
@@ -76,7 +76,8 @@ class Response {
      * 结果输出
      */
     public function output() {
-        $this->setCrossHeader();
+        // 跨域时设置
+        // $this->setCrossHeader();
     	$this->handleHeaders($this->headers);
 
         $rs = $this->getResult();
@@ -88,7 +89,7 @@ class Response {
     
     public function getResult() {
         $rs = array(
-            'ret' => $this->ret,
+            'code' => $this->code,
             'data' => $this->data,
             'msg' => $this->msg,
         );
