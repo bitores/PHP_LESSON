@@ -153,10 +153,24 @@ if (!$url) {
     }
 
     if (strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) {
-        $curPost = is_array($_POST) ? http_build_query($_POST) : $_POST;
+        // echo var_dump($GLOBALS['HTTP_RAW_POST_DATA']);
+        // $_POST只能接收文档类型为Content-Type: application/x-www-form-urlencoded提交的数据
         curl_setopt( $ch, CURLOPT_POST, true );//启用POST数据
-        curl_setopt ( $ch, CURLOPT_POST, count ( $curPost ) );
+        // $curPost = is_array($_POST) ? http_build_query($_POST) : $_POST;
+        // print_r($_POST);
+        $curPost = $GLOBALS['HTTP_RAW_POST_DATA'];//is_array($_POST) ? json_encode($_POST) : $_POST;
+        // $curPost = array(
+        //         "touser"=>"manager6116",
+        //         "agentid"=>"34008185",
+        //         "msgtype"=>"text",
+        //         "text"=>array("content"=>"jjjjj")
+        //     );
+
+        $str = json_encode($curPost);
+        
+        // curl_setopt ( $ch, CURLOPT_POST, count( $curPost ) );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $curPost);//提交POST数据
+        // echo "a". http_build_query($curPost);
     }
     
 
@@ -179,7 +193,7 @@ if (!$url) {
     
     curl_setopt( $ch, CURLOPT_USERAGENT, isset($_GET['user_agent']) ? $_GET['user_agent'] : $_SERVER['HTTP_USER_AGENT'] );
 
-    
+    ob_start();//打开缓冲区
     list( $header, $contents ) = preg_split( '/([\r\n][\r\n])\\1/', curl_exec( $ch ), 2 );
     $contents = str_replace(array("\n", "\r"), '', $contents);
 
@@ -188,7 +202,7 @@ if (!$url) {
     if(curl_errno($ch)){
         echo "error:".curl_errno($ch);
     }
-
+    ob_end_clean ();//关闭缓冲区
     curl_close( $ch );
 }
 
