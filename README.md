@@ -8,8 +8,11 @@
 最后更新: 2015-05-18
 
 git@osc：   [http://git.oschina.net/atwal/php-simple-proxy](http://git.oschina.net/atwal/php-simple-proxy)
+
 源码：      [http://git.oschina.net/atwal/php-simple-proxy/raw/master/simple_proxy.php](http://git.oschina.net/atwal/php-simple-proxy/raw/master/simple_proxy.php)
+
 参考项目：  [http://github.com/cowboy/php-simple-proxy/](http://github.com/cowboy/php-simple-proxy/)
+
 优化修改点：加上了异常处理，baseurl设置，会更安全，默认为jsonp格式
 
 ###GET请求参数
@@ -71,3 +74,56 @@ git@osc：   [http://git.oschina.net/atwal/php-simple-proxy](http://git.oschina.
     Response:
 
       > <html>...</html>
+
+###设置项
+
+    $enable_jsonp    - 是否启用JSONP格式返回。默认为true
+    $enable_native   - 是否直接返回请求信息。建议用 $valid_url_regex 配置白名单来避免XSS攻击，
+                       默认为false
+    $valid_url_regex - 正则形式的白名单。默认允许所有网址
+    $baseurl         - 如果是代理固定的请求地址，为了安全，可以设置 $baseurl 为要请求的地址，
+                       配合url参数使用，这样最终用到的地址是 $baseurl . $url
+
+
+###Ajax请求范例
+    **GET请求**
+    $.ajax({
+        type:"GET",
+        url:api_url+'?mode=native&url='+encodeURIComponent(OAPI_HOST+"/xxx/xxx?access_token="+access_token+"&yy=45"),
+        data:{
+        },
+      error:function(err){
+        alert('fail: ' + JSON.stringify(err));
+      },
+        success: function(da){
+          alert('ticket fail: ' + JSON.stringify(da));
+        },dataType:'json'
+      }); 
+
+
+    **POST请求**
+    $.ajax({
+      type:"POST",
+      beforeSend: function(req) {
+            req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        },
+      url:api_url+'?mode=native&url='+ encodeURIComponent(OAPI_HOST+'/xx/yy?access_token='+access_token),
+      data:JSON.stringify({
+        xx:"xx",
+        yy:"yy"
+      }),
+      error:function(err){
+        alert(' fail: ' + JSON.stringify(err));
+      },
+      success: function(a){
+        alert(' suc: ' + JSON.stringify(a));
+      }
+    });
+
+
+###代码修改说明
+  
+    增加 https 协议转发支持
+    增加对 请求头 的转发处理
+    增加对 GET中url 参数编码处理
+    增加对 请求数据的 转发处理
